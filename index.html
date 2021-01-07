@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <script src="https://kit.fontawesome.com/0d00291e00.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Eczar&family=Space+Mono&display=swap" rel="stylesheet">
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="header">
+      <img src="img/Washington_oregon lottery.png">
+    </div>
+    <div class="container">
+      <div class="item washington">
+        <h2>Washington Lottery</h2>
+        <ul class="fa-ul" id="stuff"></ul>
+      </div>
+      <div class="item oregon">
+        <h2>Oregon Lottery</h2>
+        <p>Oregon Lottery coming soon (maybe)</p>
+        <div id="or-stuff"></div>
+      </div>
+    </div>
+  </body>
+  <script>
+    async function getHtml() {
+      const response = await fetch(
+        "https://www.walottery.com/WinningNumbers/Default.aspx"
+      );
+      const html = await response.text();
+      return html;
+    }
+
+    getHtml().then((html) => {
+      const parser = new DOMParser();
+      const htmlDocument = parser.parseFromString(html, "text/html");
+
+      const powerBallNumbers = [
+        ...htmlDocument.querySelectorAll(".game-bucket-powerball li"),
+      ]
+        .map((el) => el.textContent)
+        .join("-");
+      const megaMillionsNumbers = [
+        ...htmlDocument.querySelectorAll(".game-bucket-megamillions li"),
+      ]
+        .map((el) => el.textContent)
+        .join("-");
+      const lottoNumbers = [
+        ...htmlDocument.querySelectorAll(".game-bucket-lotto li"),
+      ]
+        .map((el) => el.textContent)
+        .join("-");
+      const hitFiveNumbers = [
+        ...htmlDocument.querySelectorAll(".game-bucket-hit5 li"),
+      ]
+        .map((el) => el.textContent)
+        .join("-");
+      const matchFourNumbers = [
+        ...htmlDocument.querySelectorAll(".game-bucket-match4 li"),
+      ]
+        .slice(0, 4)
+        .map((el) => el.textContent)
+        .join("-");
+      const pickThreeNumbers = [
+        ...htmlDocument.querySelectorAll(".game-bucket-dailygame li"),
+      ]
+        .slice(0, 3)
+        .map((el) => el.textContent)
+        .join("-");
+      const kenoNumbers = [
+        ...htmlDocument.querySelectorAll(".game-bucket-keno li"),
+      ]
+        .map((el) => el.textContent)
+        .join("-");
+      const numbers = {
+        powerBallNumbers,
+        megaMillionsNumbers,
+        lottoNumbers,
+        hitFiveNumbers,
+        matchFourNumbers,
+        pickThreeNumbers,
+        kenoNumbers,
+      };
+      console.log(numbers);
+      const stuff = Object.entries(numbers).reduce((acc, [key, value]) => {
+        const entry = `${acc}<li><span class="fa-li"><i class="fas fa-leaf"></i></span><h3>${key}</h3><p>${value}</p></li>`;
+        return entry;
+      }, "");
+      document.getElementById("stuff").innerHTML = stuff;
+    });
+
+    async function getSecondHtml() {
+      const response = await fetch(
+        "https://www.oregonlottery.org/jackpot/"
+      );
+      const html = await response.text()
+      return html
+    }
+
+    getSecondHtml().then((html) => {
+      const parser = new DOMParser()
+      const htmlDocument = parser.parserFromString(html, "text/html")
+
+      console.log(htmlDocument)
+    })
+  </script>
+</html>
